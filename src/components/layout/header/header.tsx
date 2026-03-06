@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import PWAInstallButton from '@/components/pwa-install-button';
-import { generateOAuthURL, standalone_routes } from '@/components/shared';
+import { generateOAuthURL, redirectToLogin, standalone_routes } from '@/components/shared';
 import Button from '@/components/shared_ui/button';
 import useActiveAccount from '@/hooks/api/account/useActiveAccount';
 import { useOauth2 } from '@/hooks/auth/useOauth2';
@@ -38,8 +38,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     const has_wallet = Object.keys(accounts ?? {}).some(id => accounts?.[id].account_category === 'wallet');
 
     const currency = getCurrency?.();
-    const { localize } = useTranslations();
-
+    const { language, localize } = useTranslations();
     const { isSingleLoggingIn } = useOauth2();
 
     const { hubEnabledCountryList } = useFirebaseCountriesConfig();
@@ -141,7 +140,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                     <Button
                         tertiary
                         onClick={async () => {
-                            window.location.href = 'https://oauth.deriv.com/oauth2/authorize?app_id=125748&redirect_uri=https://dollarprinter.pro/auth/callback';
+                            redirectToLogin(false, language);
                         }}
                     >
                         <Localize i18n_default_text='Log in' />
@@ -149,7 +148,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                     <Button
                         primary
                         onClick={() => {
-                            window.open('https://deriv.partners/rx?sidc=97FBD1C7-EC02-4446-A72B-926E27CF5B6A&utm_campaign=dynamicworks&utm_medium=affiliate&utm_source=CU306765');
+                            redirectToSignUp();
                         }}
                     >
                         <Localize i18n_default_text='Sign up' />
