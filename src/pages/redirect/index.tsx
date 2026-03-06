@@ -33,6 +33,7 @@ const RedirectHandler = () => {
         const accountsList: Record<string, string> = {};
         const clientAccounts: Record<string, any> = {};
 
+        // Parse all acct/token/cur sets
         for (let i = 1; params[`acct${i}`]; i++) {
             const acct = params[`acct${i}`];
             const token = params[`token${i}`];
@@ -48,13 +49,17 @@ const RedirectHandler = () => {
             }
         }
 
+        // Handle state if provided (can contain redirect information or account preference)
+        const state = params.state ? JSON.parse(decodeURIComponent(params.state)) : {};
+
         localStorage.setItem('accountsList', JSON.stringify(accountsList));
         localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
         localStorage.setItem('authToken', params.token1);
         localStorage.setItem('active_loginid', params.acct1);
 
-        // Redirect to dashboard
-        window.location.replace(window.location.origin + '/?account=' + (params.cur1 || 'USD').toLowerCase());
+        // Redirect to dashboard with the first account's currency
+        const targetCurrency = (params.cur1 || 'USD').toLowerCase();
+        window.location.replace(window.location.origin + '/?account=' + targetCurrency);
     }, [navigate]);
 
     return <ChunkLoader message='Processing login...' />;

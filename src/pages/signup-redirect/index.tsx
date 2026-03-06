@@ -33,6 +33,7 @@ const SignupRedirectHandler = () => {
         const accountsList: Record<string, string> = {};
         const clientAccounts: Record<string, any> = {};
 
+        // Parse all acct/token/cur sets
         for (let i = 1; params[`acct${i}`]; i++) {
             const acct = params[`acct${i}`];
             const token = params[`token${i}`];
@@ -48,6 +49,9 @@ const SignupRedirectHandler = () => {
             }
         }
 
+        // Handle state if provided
+        const state = params.state ? JSON.parse(decodeURIComponent(params.state)) : {};
+
         localStorage.setItem('accountsList', JSON.stringify(accountsList));
         localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
         localStorage.setItem('authToken', params.token1);
@@ -55,7 +59,8 @@ const SignupRedirectHandler = () => {
 
         // For signup, we might want to flag that it's a new user or go to onboarding
         // Here we redirect to the main app which handles onboarding/dashboard
-        window.location.replace(window.location.origin + '/?account=' + (params.cur1 || 'USD').toLowerCase() + '&signup=true');
+        const targetCurrency = (params.cur1 || 'USD').toLowerCase();
+        window.location.replace(window.location.origin + '/?account=' + targetCurrency + '&signup=true');
     }, [navigate]);
 
     return <ChunkLoader message='Setting up your account...' />;
